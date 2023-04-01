@@ -16,7 +16,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // f = 0.5
-var w = {
+var w_list = {
     w_0 : [1,1,1,1],
     w_1 : [1,1,1,1],
     w_2 : [1,1,1,1],
@@ -140,6 +140,17 @@ function count_r( r0, r1, r2, r3, v, w0, w1, w2, w3 ) {
             w3*v*v*v );
 }
 
+function count_curve(r0, r1, r2, v, w0, w1, w2) {
+    return (r0 * w0 * (1- v) * (1 - v) +
+            2 * r1 * w1 * (1 - v) * v +
+            r2 * w2 * v * v) /
+        (w0 * (1- v) * (1 - v) +
+            2 * w1 * (1 - v) * v +
+            w2 * v * v);
+}
+
+
+
 var uvArr = [];
 var uvMap = new Map();
 
@@ -157,17 +168,20 @@ var paramFunc = function(u, v, target) {
         count_r( line_1[0].x, line_1[1].x, line_1[2].x, line_1[3].x, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
         count_r( line_2[0].x, line_2[1].x, line_2[2].x, line_2[3].x, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
         count_r( line_3[0].x, line_3[1].x, line_3[2].x, line_3[3].x, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        // count_r( line_4[0].x, line_4[1].x, line_4[2].x, line_4[3].x, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
         u,
         wr_0,
         wr_1,
         wr_2,
         wr_3
     );
+    // var x = co
     var y = count_r(
         count_r( line_0[0].y, line_0[1].y, line_0[2].y, line_0[3].y, v, w_0[0], w_0[1], w_0[2], w_0[3] ),
         count_r( line_1[0].y, line_1[1].y, line_1[2].y, line_1[3].y, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
         count_r( line_2[0].y, line_2[1].y, line_2[2].y, line_2[3].y, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
         count_r( line_3[0].y, line_3[1].y, line_3[2].y, line_3[3].y, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        // count_r( line_4[0].y, line_4[1].y, line_4[2].y, line_4[3].y, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
         u,
         wr_0,
         wr_1,
@@ -179,12 +193,102 @@ var paramFunc = function(u, v, target) {
         count_r( line_1[0].z, line_1[1].z, line_1[2].z, line_1[3].z, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
         count_r( line_2[0].z, line_2[1].z, line_2[2].z, line_2[3].z, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
         count_r( line_3[0].z, line_3[1].z, line_3[2].z, line_3[3].z, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        // count_r( line_4[0].z, line_4[1].z, line_4[2].z, line_4[3].z, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
         u,
         wr_0,
         wr_1,
         wr_2,
         wr_3
     );
+    target.set(x, y, z);
+    uvArr.push(new THREE.Vector2(u, v));
+    uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
+};
+
+var paramFunc1 = function(u, v, target) {
+
+    var u = u;
+    var v = v;
+    var wr_0 = count_w(w_0,v);
+    var wr_1 = count_w(w_1,v);
+    var wr_4 = count_w(w_4,v);
+
+    var x = count_curve(
+        count_r( line_0[0].x, line_0[1].x, line_0[2].x, line_0[3].x, v, w_0[0], w_0[1], w_0[2], w_0[3] ),
+        count_r( line_1[0].x, line_1[1].x, line_1[2].x, line_1[3].x, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
+        count_r( line_4[0].x, line_4[1].x, line_4[2].x, line_4[3].x, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        u,
+        wr_0,
+        wr_1,
+        wr_4
+    );
+    // var x = co
+    var y = count_curve(
+        count_r( line_0[0].y, line_0[1].y, line_0[2].y, line_0[3].y, v, w_0[0], w_0[1], w_0[2], w_0[3] ),
+        count_r( line_1[0].y, line_1[1].y, line_1[2].y, line_1[3].y, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
+        count_r( line_4[0].y, line_4[1].y, line_4[2].y, line_4[3].y, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        u,
+        wr_0,
+        wr_1,
+        wr_4
+    );
+    var z = count_curve(
+        count_r( line_0[0].z, line_0[1].z, line_0[2].z, line_0[3].z, v, w_0[0], w_0[1], w_0[2], w_0[3] ),
+        count_r( line_1[0].z, line_1[1].z, line_1[2].z, line_1[3].z, v, w_1[0], w_1[1], w_1[2], w_1[3] ),
+        count_r( line_4[0].z, line_4[1].z, line_4[2].z, line_4[3].z, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        u,
+        wr_0,
+        wr_1,
+        wr_4
+    );
+    target.set(x, y, z);
+    uvArr.push(new THREE.Vector2(u, v));
+    uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
+};
+
+var paramFunc2 = function(u, v, target) {
+
+    var u = u;
+    var v = v;
+    var wr_2 = count_w(w_2,v);
+    var wr_3 = count_w(w_3,v);
+    var wr_4 = count_w(w_4,v);
+
+    console.log('u = ' + u + ' v = ' + v)
+    var x = count_curve(
+        count_r( line_4[0].x, line_4[1].x, line_4[2].x, line_4[3].x, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        count_r( line_2[0].x, line_2[1].x, line_2[2].x, line_2[3].x, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
+        count_r( line_3[0].x, line_3[1].x, line_3[2].x, line_3[3].x, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        u,
+        wr_4,
+        wr_2,
+        wr_3
+    );
+    console.log(x);
+
+    // var x = co
+    var y = count_curve(
+        count_r( line_4[0].y, line_4[1].y, line_4[2].y, line_4[3].y, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        count_r( line_2[0].y, line_2[1].y, line_2[2].y, line_2[3].y, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
+        count_r( line_3[0].y, line_3[1].y, line_3[2].y, line_3[3].y, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        u,
+        wr_4,
+        wr_2,
+        wr_3
+    );
+    console.log(y);
+
+    var z = count_curve(
+        count_r( line_4[0].z, line_4[1].z, line_4[2].z, line_4[3].z, v, w_4[0], w_4[1], w_4[2], w_4[3] ),
+        count_r( line_2[0].z, line_2[1].z, line_2[2].z, line_2[3].z, v, w_2[0], w_2[1], w_2[2], w_2[3] ),
+        count_r( line_3[0].z, line_3[1].z, line_3[2].z, line_3[3].z, v, w_3[0], w_3[1], w_3[2], w_3[3] ),
+        u,
+        wr_4,
+        wr_2,
+        wr_3
+    );
+    console.log(z);
+
     target.set(x, y, z);
     uvArr.push(new THREE.Vector2(u, v));
     uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
@@ -203,6 +307,35 @@ var mesh = new THREE.Mesh(geometry, material);
 mesh.position.set( 0, 0, 0 );
 mesh.scale.multiplyScalar( 1 );
 scene.add(mesh);
+
+
+
+
+var geometry1 = new ParametricGeometry(paramFunc1, 5, 5);
+var material1 = new THREE.MeshBasicMaterial({
+    color: 0xff29,
+    side: THREE.DoubleSide,
+    wireframe: true,
+});
+
+var mesh1 = new THREE.Mesh(geometry1, material1);
+mesh1.position.set( 0, 0, 0 );
+mesh1.scale.multiplyScalar( 1 );
+scene.add(mesh1);
+
+var geometry2 = new ParametricGeometry(paramFunc2, 5, 5);
+var material2 = new THREE.MeshBasicMaterial({
+    color: 0xff29,
+    side: THREE.DoubleSide,
+    wireframe: true,
+});
+
+var mesh2 = new THREE.Mesh(geometry2, material2);
+mesh2.position.set( 0, 0, 0 );
+mesh2.scale.multiplyScalar( 1 );
+scene.add(mesh2);
+
+
 
 var line0_array = create_line_array(line_0);
 var line1_array = create_line_array(line_1);
@@ -506,7 +639,11 @@ const default_button = {
 
 function recount(){
     scene.remove(mesh);
+    scene.remove(mesh1);
+    scene.remove(mesh2);
     geometry = new ParametricGeometry(paramFunc, 5, 5);
+    geometry1 = new ParametricGeometry(paramFunc1, 5, 5);
+    geometry2 = new ParametricGeometry(paramFunc1, 5, 5);
 
     scene.remove(points);
     vertices = new Float32Array([
@@ -551,7 +688,11 @@ function recount(){
     scene.add(points);
 
     mesh = new THREE.Mesh(geometry, material);
+    mesh1 = new THREE.Mesh(geometry1, material);
+    mesh2 = new THREE.Mesh(geometry2, material);
     scene.add(mesh);
+    scene.add(mesh1);
+    scene.add(mesh2);
 }
 
 //drawPoints();
