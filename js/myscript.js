@@ -231,6 +231,7 @@ var addMesh = function() {
     while (pointIter < lines.length - 1) {
 
         let tempGeometry = new ParametricGeometry(paramFuncDynamic3to4, 5, 5);
+        // let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
         let tempMaterial = new THREE.MeshBasicMaterial({
             color: 0xff29,
             side: THREE.DoubleSide,
@@ -455,12 +456,18 @@ gui.add(options, 'frames',1, 40, 1).onChange(function(e){
     mesh.geometry = new ParametricGeometry(paramFunc, e, e);
 });
 var helperNormals;
+let normalsArray = [];
 gui.add(options, 'normals').onChange(function(e){
     if(e){
-        helperNormals = new VertexNormalsHelper( mesh, 1, 0xff0000 );
-        scene.add( helperNormals );
+        $.each(meshArray, function (index, value){
+            let tempNormals = new VertexNormalsHelper( value, 1, 0xff0000 );
+            scene.add(tempNormals);
+            normalsArray.push(tempNormals);
+        });
     } else {
-        scene.remove( helperNormals )
+        $.each(normalsArray, function (index, value) {
+            scene.remove(value);
+        })
     }
 });
 
