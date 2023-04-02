@@ -16,17 +16,47 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // f = 0.5
-var w_list = {
-    w_0 : [1,1,1,1],
-    w_1 : [1,1,1,1],
-    w_2 : [1,1,1,1],
-    w_3 : [1,1,1,1],
-    w_4 : [1,1,1,1],
-}
+var w_list = [
+    [1,1,1,1],    // w_0
+    [1,1,1,1],    // w_1
+    [1,1,1,1],    // w_2
+    [1,1,1,1],    // w_3
+    [1,1,1,1],    // w_4
+];
+console.log(w_list.length);
 
-var lines = {
-    
-}
+var lines = [
+    [   // line 0
+        {x: 5, y: 0, z: 15},
+        {x: 8, y: 0, z: 10},
+        {x: 10, y: 0, z: 5},
+        {x: 10, y: 0, z: 0},
+    ],
+    [   // line 1
+        {x: 3, y: 4, z: 15},
+        {x: 5, y: 5, z: 10},
+        {x: 7, y: 7, z: 5},
+        {x: 7, y: 10, z: 0},
+    ],
+    [   // line 2
+        {x: 0, y: 7, z: 15},
+        {x: 0, y: 8, z: 10},
+        {x: 0, y: 10, z: 5},
+        {x: 0, y: 13, z: 0},
+    ],
+    [   // line 3
+        {x: -3, y: 4, z: 15},
+        {x: -5, y: 5, z: 10},
+        {x: -7, y: 7, z: 5},
+        {x: -7, y: 10, z: 0},
+    ],
+    [   // line 4
+        {x: -5, y: 0, z: 15},
+        {x: -8, y: 0, z: 10},
+        {x: -10, y: 0, z: 5},
+        {x: -10, y: 0, z: 0},
+    ],
+]
 
 var w_0 = [1,1,1,1];
 var w_1 = [1,1,1,1];
@@ -65,13 +95,6 @@ line_4.push({x: 0, y: 8, z: 10});
 line_4.push({x: 0, y: 10, z: 5});
 line_4.push({x: 0, y: 13, z: 0});
 
-var lines = {
-    line_0 : line_0,
-    line_1 : line_1,
-    line_2 : line_2,
-    line_3 : line_3,
-    line_4 : line_4,
-}
 function create_line_array(line) {
     var line_array = [];
 
@@ -294,48 +317,135 @@ var paramFunc2 = function(u, v, target) {
     uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
 };
 
+var pointIter = 0;
+let meshArray = [];
+
+var paramFuncDynamic3to4 = function(u, v, target) {
+
+    var u = u;
+    var v = v;
+    var wr_list = [];
+    for (let i = pointIter; i < pointIter + 3; i++) {
+        wr_list.push(count_w(w_list[i], v));
+    }
+
+    var x = count_curve(
+        count_r( lines[pointIter][0].x, lines[pointIter][1].x, lines[pointIter][2].x, lines[pointIter][3].x, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].x, lines[pointIter + 1][1].x, lines[pointIter + 1][2].x, lines[pointIter + 1][3].x, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].x, lines[pointIter + 2][1].x, lines[pointIter + 2][2].x, lines[pointIter + 2][3].x, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2]
+    );
+
+    // var x = co
+    var y = count_curve(
+        count_r( lines[pointIter][0].y, lines[pointIter][1].y, lines[pointIter][2].y, lines[pointIter][3].y, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].y, lines[pointIter + 1][1].y, lines[pointIter + 1][2].y, lines[pointIter + 1][3].y, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].y, lines[pointIter + 2][1].y, lines[pointIter + 2][2].y, lines[pointIter + 2][3].y, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2]
+    );
+
+    var z = count_curve(
+        count_r( lines[pointIter][0].z, lines[pointIter][1].z, lines[pointIter][2].z, lines[pointIter][3].z, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].z, lines[pointIter + 1][1].z, lines[pointIter + 1][2].z, lines[pointIter + 1][3].z, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].z, lines[pointIter + 2][1].z, lines[pointIter + 2][2].z, lines[pointIter + 2][3].z, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2]
+    );
+
+    target.set(x, y, z);
+    uvArr.push(new THREE.Vector2(u, v));
+    uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
+};
+
+var addMesh = function() {
+    pointIter = 0;
+    meshArray = [];
+
+    while (pointIter < lines.length - 1) {
+
+        let tempGeometry = new ParametricGeometry(paramFuncDynamic3to4, 5, 5);
+        let tempMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff29,
+            side: THREE.DoubleSide,
+            wireframe: true,
+        });
+        let tempMesh = new THREE.Mesh(tempGeometry, tempMaterial);
+        tempMesh.position.set( 0, 0, 0 );
+        tempMesh.scale.multiplyScalar( 1 );
+        scene.add(tempMesh);
+
+        meshArray.push(tempMesh);
+        pointIter += 2;
+    }
+}
+
+var paramFuncDynamic4to4 = function(u, v, target) {
+
+    var u = u;
+    var v = v;
+    var wr_list = [];
+    for (let i = pointIter; i < pointIter + 4; i++) {
+        wr_list.push(count_w(w_list[i], v));
+    }
+
+    var x = count_r(
+        count_r( lines[pointIter][0].x, lines[pointIter][1].x, lines[pointIter][2].x, lines[pointIter][3].x, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].x, lines[pointIter + 1][1].x, lines[pointIter + 1][2].x, lines[pointIter + 1][3].x, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].x, lines[pointIter + 2][1].x, lines[pointIter + 2][2].x, lines[pointIter + 2][3].x, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_r( lines[pointIter + 3][0].x, lines[pointIter + 2][1].x, lines[pointIter + 3][2].x, lines[pointIter + 3][3].x, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2],
+        wr_list[3]
+    );
+
+    // var x = co
+    var y = count_curve(
+        count_r( lines[pointIter][0].y, lines[pointIter][1].y, lines[pointIter][2].y, lines[pointIter][3].y, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].y, lines[pointIter + 1][1].y, lines[pointIter + 1][2].y, lines[pointIter + 1][3].y, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].y, lines[pointIter + 2][1].y, lines[pointIter + 2][2].y, lines[pointIter + 2][3].y, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_r( lines[pointIter + 3][0].y, lines[pointIter + 2][1].y, lines[pointIter + 3][2].y, lines[pointIter + 3][3].y, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2],
+        wr_list[3]
+    );
+
+    var z = count_curve(
+        count_r( lines[pointIter][0].z, lines[pointIter][1].z, lines[pointIter][2].z, lines[pointIter][3].z, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 1][0].z, lines[pointIter + 1][1].z, lines[pointIter + 1][2].z, lines[pointIter + 1][3].z, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
+        count_r( lines[pointIter + 2][0].z, lines[pointIter + 2][1].z, lines[pointIter + 2][2].z, lines[pointIter + 2][3].z, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_r( lines[pointIter + 3][0].z, lines[pointIter + 2][1].z, lines[pointIter + 3][2].z, lines[pointIter + 3][3].z, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        u,
+        wr_list[0],
+        wr_list[1],
+        wr_list[2],
+        wr_list[3]
+    );
+
+    target.set(x, y, z);
+    uvArr.push(new THREE.Vector2(u, v));
+    uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
+};
+
 
 //--------ADD GEOMETRY & MESH--------
-var geometry = new ParametricGeometry(paramFunc, 5, 5);
-var material = new THREE.MeshBasicMaterial({
-    color: 0xff29,
-    side: THREE.DoubleSide,
-    wireframe: true,
+addMesh();
+let line_array = [];
+$.each(lines, function (index, value) {
+    let tempLineArray = create_line_array(value);
+    line_array.push(create_line(tempLineArray));
 });
-
-var mesh = new THREE.Mesh(geometry, material);
-mesh.position.set( 0, 0, 0 );
-mesh.scale.multiplyScalar( 1 );
-scene.add(mesh);
-
-
-
-
-var geometry1 = new ParametricGeometry(paramFunc1, 5, 5);
-var material1 = new THREE.MeshBasicMaterial({
-    color: 0xff29,
-    side: THREE.DoubleSide,
-    wireframe: true,
-});
-
-var mesh1 = new THREE.Mesh(geometry1, material1);
-mesh1.position.set( 0, 0, 0 );
-mesh1.scale.multiplyScalar( 1 );
-scene.add(mesh1);
-
-var geometry2 = new ParametricGeometry(paramFunc2, 5, 5);
-var material2 = new THREE.MeshBasicMaterial({
-    color: 0xff29,
-    side: THREE.DoubleSide,
-    wireframe: true,
-});
-
-var mesh2 = new THREE.Mesh(geometry2, material2);
-mesh2.position.set( 0, 0, 0 );
-mesh2.scale.multiplyScalar( 1 );
-scene.add(mesh2);
-
-
 
 var line0_array = create_line_array(line_0);
 var line1_array = create_line_array(line_1);
@@ -364,32 +474,22 @@ function setup_lines(){    // Create a Three.js geometry for the point
     line4 = create_line(line4_array);
 }
 //scene.add(line3);
+let setPoints = function () {
+    let points = [];
+    $.each(lines, function (index, value) {
+        $.each(value, function (index, value) {
+            points.push(value.x);
+            points.push(value.y);
+            points.push(value.z);
+        })
+    })
 
+    return points;
+}
 
 // Create a Three.js geometry for the point
 let pointGeometry = new THREE.BufferGeometry();
-let vertices = new Float32Array([
-    line_0[0].x, line_0[0].y, line_0[0].z,
-    line_0[1].x, line_0[1].y, line_0[1].z,
-    line_0[2].x, line_0[2].y, line_0[2].z,
-    line_0[3].x, line_0[3].y, line_0[3].z,
-    line_1[0].x, line_1[0].y, line_1[0].z,
-    line_1[1].x, line_1[1].y, line_1[1].z,
-    line_1[2].x, line_1[2].y, line_1[2].z,
-    line_1[3].x, line_1[3].y, line_1[3].z,
-    line_2[0].x, line_2[0].y, line_2[0].z,
-    line_2[1].x, line_2[1].y, line_2[1].z,
-    line_2[2].x, line_2[2].y, line_2[2].z,
-    line_2[3].x, line_2[3].y, line_2[3].z,
-    line_3[0].x, line_3[0].y, line_3[0].z,
-    line_3[1].x, line_3[1].y, line_3[1].z,
-    line_3[2].x, line_3[2].y, line_3[2].z,
-    line_3[3].x, line_3[3].y, line_3[3].z,
-    line_4[0].x, line_4[0].y, line_4[0].z,
-    line_4[1].x, line_4[1].y, line_4[1].z,
-    line_4[2].x, line_4[2].y, line_4[2].z,
-    line_4[3].x, line_4[3].y, line_4[3].z
-]);
+let vertices = new Float32Array(setPoints());
 pointGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
 let pointMaterial = new THREE.PointsMaterial({ color: 0xfff000, size: 1 });
 let points = new THREE.Points(pointGeometry, pointMaterial);
@@ -529,6 +629,9 @@ gui.add(options, 'carkas').onChange(function(e){
     if(e){
         scene.add(points);
 
+        $.each(line_array, function (index, value) {
+            scene.add(value);
+        })
         scene.add(line0);
         scene.add(line1);
         scene.add(line2);
@@ -542,11 +645,23 @@ gui.add(options, 'carkas').onChange(function(e){
         scene.remove(line4);
 
         scene.remove(points);
+
+        $.each(line_array, function (index, value) {
+            scene.remove(value);
+        })
     }
 });
 
 var evclid = gui.addFolder('evclid');
 evclid.add(options, 'movex', -10, 10, 0.1).onChange(function(e){
+    $.each(meshArray, function (index, value) {
+        value.position.x = e;
+    });
+    
+    $.each(line_array, function (index, value) {
+        value.position.x = e;
+    });
+    
     mesh.position.x = e;
     line0.position.x = e;
     line1.position.x = e;
@@ -557,6 +672,14 @@ evclid.add(options, 'movex', -10, 10, 0.1).onChange(function(e){
     points.position.x = e;
 });
 evclid.add(options, 'movey', -10, 10, 0.1).onChange(function(e){
+    $.each(meshArray, function (index, value) {
+        value.position.y = e;
+    });
+
+    $.each(line_array, function (index, value) {
+        value.position.y = e;
+    });
+    
     mesh.position.y = e;
     line0.position.y = e;
     line1.position.y = e;
@@ -567,6 +690,14 @@ evclid.add(options, 'movey', -10, 10, 0.1).onChange(function(e){
     points.position.y = e;
 });
 evclid.add(options, 'movez', -10, 10, 0.1).onChange(function(e){
+    $.each(meshArray, function (index, value) {
+        value.position.z = e;
+    });
+
+    $.each(line_array, function (index, value) {
+        value.position.z = e;
+    });
+    
     mesh.position.z = e;
     line0.position.z = e;
     line1.position.z = e;
@@ -579,6 +710,15 @@ evclid.add(options, 'movez', -10, 10, 0.1).onChange(function(e){
 
 
 evclid.add(options, 'rotatex', -180, 180, 1).onChange(function(e){
+    let rotX = (e*Math.PI)/180;
+    $.each(meshArray, function (index, value) {
+        value.rotation.x = rotX;
+    });
+
+    $.each(line_array, function (index, value) {
+        value.rotation.x = rotX;
+    });
+    
     mesh.rotation.x = (e*Math.PI)/180;
     line0.rotation.x = mesh.rotation.x;
     line1.rotation.x = mesh.rotation.x;
@@ -590,6 +730,15 @@ evclid.add(options, 'rotatex', -180, 180, 1).onChange(function(e){
 
 });
 evclid.add(options, 'rotatey', -180, 180, 1).onChange(function(e){
+    let rotY = (e*Math.PI)/180;
+    $.each(meshArray, function (index, value) {
+        value.rotation.y = rotY;
+    });
+
+    $.each(line_array, function (index, value) {
+        value.rotation.y = rotY;
+    });
+    
     mesh.rotation.y = (e*Math.PI)/180;
     line0.rotation.y = mesh.rotation.y;
     line1.rotation.y = mesh.rotation.y;
@@ -600,6 +749,15 @@ evclid.add(options, 'rotatey', -180, 180, 1).onChange(function(e){
     points.rotation.y = mesh.rotation.y;
 });
 evclid.add(options, 'rotatez', -180, 180, 1).onChange(function(e){
+    let rotZ = (e*Math.PI)/180;
+    $.each(meshArray, function (index, value) {
+        value.rotation.z = rotZ;
+    });
+
+    $.each(line_array, function (index, value) {
+        value.rotation.z = rotZ;
+    });
+    
     mesh.rotation.z = (e*Math.PI)/180;
     line0.rotation.z = mesh.rotation.z;
     line1.rotation.z = mesh.rotation.z;
@@ -609,65 +767,21 @@ evclid.add(options, 'rotatez', -180, 180, 1).onChange(function(e){
 
     points.rotation.z = mesh.rotation.z;
 });
-//evclid.open();
-
-var line_0_options = add_points(0, line_0, 4);
-var line_1_options = add_points(1, line_1, 4);
-var line_2_options = add_points(2, line_2, 4);
-var line_3_options = add_points(3, line_3, 4);
-var line_4_options = add_points(4, line_4, 4);
-
-const default_button = {
-    default: function(){
-        scene.remove(mesh);
-        geometry = new ParametricGeometry(paramFunc, 5, 5);
-        mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set( 0, 0, 0 );
-        mesh.scale.multiplyScalar( 1 );
-        scene.add(mesh);
-        scene.remove( helperNormals )
-        mesh.rotation.x = 0;
-        mesh.rotation.y = 0;
-        mesh.rotation.z = 0;
-        mesh.position.x = 0;
-        mesh.position.y = 0;
-        mesh.position.z = 0;
-        mesh.material.wireframe = true;
-        mesh.material.color.set(0xff29);
-    }
-};
+// evclid.open();
+let linesOptions = [];
+$.each(lines, function (index, value) {
+    linesOptions.push(add_points(index, value, 4));
+})
 
 function recount(){
-    scene.remove(mesh);
-    scene.remove(mesh1);
-    scene.remove(mesh2);
-    geometry = new ParametricGeometry(paramFunc, 5, 5);
-    geometry1 = new ParametricGeometry(paramFunc1, 5, 5);
-    geometry2 = new ParametricGeometry(paramFunc1, 5, 5);
+    $.each(meshArray, function (index, value) {
+       scene.remove(value);
+    });
+
+    addMesh();
 
     scene.remove(points);
-    vertices = new Float32Array([
-        line_0[0].x, line_0[0].y, line_0[0].z,
-        line_0[1].x, line_0[1].y, line_0[1].z,
-        line_0[2].x, line_0[2].y, line_0[2].z,
-        line_0[3].x, line_0[3].y, line_0[3].z,
-        line_1[0].x, line_1[0].y, line_1[0].z,
-        line_1[1].x, line_1[1].y, line_1[1].z,
-        line_1[2].x, line_1[2].y, line_1[2].z,
-        line_1[3].x, line_1[3].y, line_1[3].z,
-        line_2[0].x, line_2[0].y, line_2[0].z,
-        line_2[1].x, line_2[1].y, line_2[1].z,
-        line_2[2].x, line_2[2].y, line_2[2].z,
-        line_2[3].x, line_2[3].y, line_2[3].z,
-        line_3[0].x, line_3[0].y, line_3[0].z,
-        line_3[1].x, line_3[1].y, line_3[1].z,
-        line_3[2].x, line_3[2].y, line_3[2].z,
-        line_3[3].x, line_3[3].y, line_3[3].z,
-        line_4[0].x, line_4[0].y, line_4[0].z,
-        line_4[1].x, line_4[1].y, line_4[1].z,
-        line_4[2].x, line_4[2].y, line_4[2].z,
-        line_4[3].x, line_4[3].y, line_4[3].z
-    ]);
+    vertices = new Float32Array(setPoints());
     pointGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     pointMaterial = new THREE.PointsMaterial({ color: 0xfff000, size: 1 });
     points = new THREE.Points(pointGeometry, pointMaterial);
@@ -686,13 +800,6 @@ function recount(){
     scene.add(line3);
     scene.add(line4);
     scene.add(points);
-
-    mesh = new THREE.Mesh(geometry, material);
-    mesh1 = new THREE.Mesh(geometry1, material);
-    mesh2 = new THREE.Mesh(geometry2, material);
-    scene.add(mesh);
-    scene.add(mesh1);
-    scene.add(mesh2);
 }
 
 //drawPoints();
