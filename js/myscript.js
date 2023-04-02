@@ -22,8 +22,9 @@ var w_list = [
     [1,1,1,1],    // w_2
     [1,1,1,1],    // w_3
     [1,1,1,1],    // w_4
+    [1,1,1,1],    // w_4
+    [1,1,1,1],    // w_4
 ];
-console.log(w_list.length);
 
 var lines = [
     [   // line 0
@@ -39,61 +40,65 @@ var lines = [
         {x: 7, y: 10, z: 0},
     ],
     [   // line 2
+        {x: 1, y: 4, z: 15},
+        {x: 2, y: 5, z: 10},
+        {x: 3, y: 7, z: 5},
+        {x: 3, y: 10, z: 0},
+    ],
+    [   // line 3
         {x: 0, y: 7, z: 15},
         {x: 0, y: 8, z: 10},
         {x: 0, y: 10, z: 5},
         {x: 0, y: 13, z: 0},
     ],
-    [   // line 3
+    [   // line 4
+        {x: -1, y: 4, z: 15},
+        {x: -2, y: 5, z: 10},
+        {x: -3, y: 7, z: 5},
+        {x: -3, y: 10, z: 0},
+    ],
+    [   // line 5
         {x: -3, y: 4, z: 15},
         {x: -5, y: 5, z: 10},
         {x: -7, y: 7, z: 5},
         {x: -7, y: 10, z: 0},
     ],
-    [   // line 4
+    [   // line 6
         {x: -5, y: 0, z: 15},
         {x: -8, y: 0, z: 10},
         {x: -10, y: 0, z: 5},
         {x: -10, y: 0, z: 0},
     ],
-]
+];
 
-var w_0 = [1,1,1,1];
-var w_1 = [1,1,1,1];
-var w_2 = [1,1,1,1];
-var w_3 = [1,1,1,1];
-var w_4 = [1,1,1,1];
+var lines_test = [
+    [
+        {x: 5, y: 0, z: 15},
+        {x: 8, y: 0, z: 10},
+        {x: 10, y: 0, z: 5},
+        {x: 10, y: 0, z: 0},
+    ],
+    [
+        {x: 3, y: 4, z: 15},
+        {x: 5, y: 5, z: 10},
+        {x: 7, y: 7, z: 5},
+        {x: 7, y: 10, z: 0},
+    ],
+    [
+        {x: -3, y: 4, z: 15},
+        {x: -5, y: 5, z: 10},
+        {x: -7, y: 7, z: 5},
+        {x: -7, y: 10, z: 0},
+    ],
+    [
+        {x: -5, y: 0, z: 15},
+        {x: -8, y: 0, z: 10},
+        {x: -10, y: 0, z: 5},
+        {x: -10, y: 0, z: 0},
+    ],
+];
 
-var line_0= [];
-line_0.push({x: 5, y: 0, z: 15});
-line_0.push({x: 8, y: 0, z: 10});
-line_0.push({x: 10, y: 0, z: 5});
-line_0.push({x: 10, y: 0, z: 0});
-
-var line_1 = [];
-line_1.push({x: 3, y: 4, z: 15});
-line_1.push({x: 5, y: 5, z: 10});
-line_1.push({x: 7, y: 7, z: 5});
-line_1.push({x: 7, y: 10, z: 0});
-
-
-var line_2 = [];
-line_2.push({x: -3, y: 4, z: 15});
-line_2.push({x: -5, y: 5, z: 10});
-line_2.push({x: -7, y: 7, z: 5});
-line_2.push({x: -7, y: 10, z: 0});
-
-var line_3 = [];
-line_3.push({x: -5, y: 0, z: 15});
-line_3.push({x: -8, y: 0, z: 10});
-line_3.push({x: -10, y: 0, z: 5});
-line_3.push({x: -10, y: 0, z: 0});
-
-var line_4 = [];
-line_4.push({x: 0, y: 7, z: 15});
-line_4.push({x: 0, y: 8, z: 10});
-line_4.push({x: 0, y: 10, z: 5});
-line_4.push({x: 0, y: 13, z: 0});
+lines = lines_test;
 
 function create_line_array(line) {
     var line_array = [];
@@ -117,14 +122,23 @@ function add_points(line_id, line, point_count = 0) {
 
     for (let i = 0; i < point_count; i++) {
         let temp_point = line_options.addFolder('point' + i);
-        temp_point.add(options, 'line_' + line_id + '_' + i +'x', -20, 20, 1).onChange(function(e){
+        let optionName = 'line_' + line_id + '_' + i +'x';
+        options[optionName] = line[i].x;
+
+        temp_point.add(options, optionName, -20, 20, 1).onChange(function(e){
             line[i].x = e;
             recount();
         });
+
+        optionName = 'line_' + line_id + '_' + i +'y';
+        options[optionName] = line[i].y;
         temp_point.add(options, 'line_' + line_id + '_' + i +'y', -20, 20, 1).onChange(function(e){
             line[i].y = e;
             recount();
         });
+
+        optionName = 'line_' + line_id + '_' + i +'z';
+        options[optionName] = line[i].z;
         temp_point.add(options, 'line_' + line_id + '_' + i +'z', -20, 20, 1).onChange(function(e){
             line[i].z = e;
             recount();
@@ -230,8 +244,8 @@ var addMesh = function() {
 
     while (pointIter < lines.length - 1) {
 
-        let tempGeometry = new ParametricGeometry(paramFuncDynamic3to4, 5, 5);
-        // let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
+        // let tempGeometry = new ParametricGeometry(paramFuncDynamic3to4, 5, 5);
+        let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
         let tempMaterial = new THREE.MeshBasicMaterial({
             color: 0xff29,
             side: THREE.DoubleSide,
@@ -243,56 +257,52 @@ var addMesh = function() {
         scene.add(tempMesh);
 
         meshArray.push(tempMesh);
-        pointIter += 2;
+        pointIter += 3;
     }
 }
 
 var paramFuncDynamic4to4 = function(u, v, target) {
-
     var u = u;
     var v = v;
+
     var wr_list = [];
     for (let i = pointIter; i < pointIter + 4; i++) {
         wr_list.push(count_w(w_list[i], v));
     }
 
     var x = count_r(
-        count_r( lines[pointIter][0].x, lines[pointIter][1].x, lines[pointIter][2].x, lines[pointIter][3].x, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_r( lines[pointIter + 0][0].x, lines[pointIter + 0][1].x, lines[pointIter + 0][2].x, lines[pointIter + 0][3].x, v, w_list[pointIter + 0][0], w_list[pointIter + 0][1], w_list[pointIter + 0][2], w_list[pointIter + 0][3] ),
         count_r( lines[pointIter + 1][0].x, lines[pointIter + 1][1].x, lines[pointIter + 1][2].x, lines[pointIter + 1][3].x, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
         count_r( lines[pointIter + 2][0].x, lines[pointIter + 2][1].x, lines[pointIter + 2][2].x, lines[pointIter + 2][3].x, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
-        count_r( lines[pointIter + 3][0].x, lines[pointIter + 2][1].x, lines[pointIter + 3][2].x, lines[pointIter + 3][3].x, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        count_r( lines[pointIter + 3][0].x, lines[pointIter + 3][1].x, lines[pointIter + 3][2].x, lines[pointIter + 3][3].x, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
         u,
         wr_list[0],
         wr_list[1],
         wr_list[2],
-        wr_list[3]
+        wr_list[3],
     );
-
-    // var x = co
-    var y = count_curve(
-        count_r( lines[pointIter][0].y, lines[pointIter][1].y, lines[pointIter][2].y, lines[pointIter][3].y, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+    var y = count_r(
+        count_r( lines[pointIter + 0][0].y, lines[pointIter + 0][1].y, lines[pointIter + 0][2].y, lines[pointIter + 0][3].y, v, w_list[pointIter + 0][0], w_list[pointIter + 0][1], w_list[pointIter + 0][2], w_list[pointIter + 0][3] ),
         count_r( lines[pointIter + 1][0].y, lines[pointIter + 1][1].y, lines[pointIter + 1][2].y, lines[pointIter + 1][3].y, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
         count_r( lines[pointIter + 2][0].y, lines[pointIter + 2][1].y, lines[pointIter + 2][2].y, lines[pointIter + 2][3].y, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
-        count_r( lines[pointIter + 3][0].y, lines[pointIter + 2][1].y, lines[pointIter + 3][2].y, lines[pointIter + 3][3].y, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        count_r( lines[pointIter + 3][0].y, lines[pointIter + 3][1].y, lines[pointIter + 3][2].y, lines[pointIter + 3][3].y, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
         u,
         wr_list[0],
         wr_list[1],
         wr_list[2],
-        wr_list[3]
+        wr_list[3],
     );
-
-    var z = count_curve(
-        count_r( lines[pointIter][0].z, lines[pointIter][1].z, lines[pointIter][2].z, lines[pointIter][3].z, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+    var z = count_r(
+        count_r( lines[pointIter + 0][0].z, lines[pointIter + 0][1].z, lines[pointIter + 0][2].z, lines[pointIter + 0][3].z, v, w_list[pointIter + 0][0], w_list[pointIter + 0][1], w_list[pointIter + 0][2], w_list[pointIter + 0][3] ),
         count_r( lines[pointIter + 1][0].z, lines[pointIter + 1][1].z, lines[pointIter + 1][2].z, lines[pointIter + 1][3].z, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
         count_r( lines[pointIter + 2][0].z, lines[pointIter + 2][1].z, lines[pointIter + 2][2].z, lines[pointIter + 2][3].z, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
-        count_r( lines[pointIter + 3][0].z, lines[pointIter + 2][1].z, lines[pointIter + 3][2].z, lines[pointIter + 3][3].z, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
+        count_r( lines[pointIter + 3][0].z, lines[pointIter + 3][1].z, lines[pointIter + 3][2].z, lines[pointIter + 3][3].z, v, w_list[pointIter + 3][0], w_list[pointIter + 3][1], w_list[pointIter + 3][2], w_list[pointIter + 3][3] ),
         u,
         wr_list[0],
         wr_list[1],
         wr_list[2],
-        wr_list[3]
+        wr_list[3],
     );
-
     target.set(x, y, z);
     uvArr.push(new THREE.Vector2(u, v));
     uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
@@ -351,82 +361,6 @@ var options = {
     rotatey: 0,
     rotatez: 0,
     carkas: false,
-    line_0_0x: line_0[0].x,
-    line_0_0y: line_0[0].y,
-    line_0_0z: line_0[0].z,
-    line_0_1x: line_0[1].x,
-    line_0_1y: line_0[1].y,
-    line_0_1z: line_0[1].z,
-    line_0_2x: line_0[2].x,
-    line_0_2y: line_0[2].y,
-    line_0_2z: line_0[2].z,
-    line_0_3x: line_0[3].x,
-    line_0_3y: line_0[3].y,
-    line_0_3z: line_0[3].z,
-
-    line_1_0x: line_1[0].x,
-    line_1_0y: line_1[0].y,
-    line_1_0z: line_1[0].z,
-    line_1_1x: line_1[1].x,
-    line_1_1y: line_1[1].y,
-    line_1_1z: line_1[1].z,
-    line_1_2x: line_1[2].x,
-    line_1_2y: line_1[2].y,
-    line_1_2z: line_1[2].z,
-    line_1_3x: line_1[3].x,
-    line_1_3y: line_1[3].y,
-    line_1_3z: line_1[3].z,
-
-    line_2_0x: line_2[0].x,
-    line_2_0y: line_2[0].y,
-    line_2_0z: line_2[0].z,
-    line_2_1x: line_2[1].x,
-    line_2_1y: line_2[1].y,
-    line_2_1z: line_2[1].z,
-    line_2_2x: line_2[2].x,
-    line_2_2y: line_2[2].y,
-    line_2_2z: line_2[2].z,
-    line_2_3x: line_2[3].x,
-    line_2_3y: line_2[3].y,
-    line_2_3z: line_2[3].z,
-
-    line_3_0x: line_3[0].x,
-    line_3_0y: line_3[0].y,
-    line_3_0z: line_3[0].z,
-    line_3_1x: line_3[1].x,
-    line_3_1y: line_3[1].y,
-    line_3_1z: line_3[1].z,
-    line_3_2x: line_3[2].x,
-    line_3_2y: line_3[2].y,
-    line_3_2z: line_3[2].z,
-    line_3_3x: line_3[3].x,
-    line_3_3y: line_3[3].y,
-    line_3_3z: line_3[3].z,
-
-    line_4_0x: line_3[0].x,
-    line_4_0y: line_3[0].y,
-    line_4_0z: line_3[0].z,
-    line_4_1x: line_3[1].x,
-    line_4_1y: line_3[1].y,
-    line_4_1z: line_3[1].z,
-    line_4_2x: line_3[2].x,
-    line_4_2y: line_3[2].y,
-    line_4_2z: line_3[2].z,
-    line_4_3x: line_3[3].x,
-    line_4_3y: line_3[3].y,
-    line_4_3z: line_3[3].z
-    // reset: function(){
-    //     this.color = 0xff29;
-    //     this.wireframe = true;
-    //     this.frames = 10;
-    //     this.normals = false;
-    //     this.movex = 0;
-    //     this.movey = 0;
-    //     this.movez = 0;
-    //     this.rotatex = 0;
-    //     this.rotatey = 0;
-    //     this.rotatez = 0;
-    // }
 };
 
 var originOptions = Object.assign({}, options);
