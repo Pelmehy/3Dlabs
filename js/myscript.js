@@ -28,77 +28,33 @@ var w_list = [
 
 var lines = [
     [   // line 0
-        {x: 5, y: 0, z: 15},
-        {x: 8, y: 0, z: 10},
-        {x: 10, y: 0, z: 5},
-        {x: 10, y: 0, z: 0},
+        {x: 3, y: 11, z: 13},
+        {x: 3, y: 11, z: 10},
+        {x: 3, y: 11, z: 2},
     ],
     [   // line 1
-        {x: 3, y: 4, z: 15},
-        {x: 5, y: 5, z: 10},
-        {x: 7, y: 7, z: 5},
-        {x: 7, y: 10, z: 0},
+        {x: 7, y: 4, z: 18},
+        {x: 7, y: 4, z: 10},
+        {x: 7, y: 4, z: -10},
     ],
     [   // line 2
-        {x: 1, y: 4, z: 15},
-        {x: 2, y: 5, z: 10},
-        {x: 3, y: 7, z: 5},
-        {x: 3, y: 10, z: 0},
+        {x: 0, y: 4, z: 15},
+        {x: 0, y: 4, z: 10},
+        {x: 0, y: 4, z: 1},
     ],
     [   // line 3
-        {x: 0, y: 7, z: 15},
-        {x: 0, y: 8, z: 10},
-        {x: 0, y: 10, z: 5},
-        {x: 0, y: 13, z: 0},
+        {x: -7, y: 4, z: 18},
+        {x: -7, y: 4, z: 10},
+        {x: -7, y: 4, z: -10},
     ],
     [   // line 4
-        {x: -1, y: 4, z: 15},
-        {x: -2, y: 5, z: 10},
-        {x: -3, y: 7, z: 5},
-        {x: -3, y: 10, z: 0},
-    ],
-    [   // line 5
-        {x: -3, y: 4, z: 15},
-        {x: -5, y: 5, z: 10},
-        {x: -7, y: 7, z: 5},
-        {x: -7, y: 10, z: 0},
-    ],
-    [   // line 6
-        {x: -5, y: 0, z: 15},
-        {x: -8, y: 0, z: 10},
-        {x: -10, y: 0, z: 5},
-        {x: -10, y: 0, z: 0},
+        {x: -3, y: 11, z: 13},
+        {x: -3, y: 11, z: 10},
+        {x: -3, y: 11, z: 2},
     ],
 ];
 
-var lines_test = [
-    [
-        {x: 5, y: 0, z: 15},
-        {x: 8, y: 0, z: 10},
-        {x: 10, y: 0, z: 5},
-        {x: 10, y: 0, z: 0},
-    ],
-    [
-        {x: 3, y: 4, z: 15},
-        {x: 5, y: 5, z: 10},
-        {x: 7, y: 7, z: 5},
-        {x: 7, y: 10, z: 0},
-    ],
-    [
-        {x: -3, y: 4, z: 15},
-        {x: -5, y: 5, z: 10},
-        {x: -7, y: 7, z: 5},
-        {x: -7, y: 10, z: 0},
-    ],
-    [
-        {x: -5, y: 0, z: 15},
-        {x: -8, y: 0, z: 10},
-        {x: -10, y: 0, z: 5},
-        {x: -10, y: 0, z: 0},
-    ],
-];
-
-lines = lines_test;
+// lines = lines_test;
 
 function create_line_array(line) {
     var line_array = [];
@@ -193,7 +149,7 @@ var uvMap = new Map();
 var pointIter = 0;
 let meshArray = [];
 
-var paramFuncDynamic3to4 = function(u, v, target) {
+var paramFuncDynamic3to3 = function(u, v, target) {
 
     var u = u;
     var v = v;
@@ -203,9 +159,9 @@ var paramFuncDynamic3to4 = function(u, v, target) {
     }
 
     var x = count_curve(
-        count_r( lines[pointIter][0].x, lines[pointIter][1].x, lines[pointIter][2].x, lines[pointIter][3].x, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
-        count_r( lines[pointIter + 1][0].x, lines[pointIter + 1][1].x, lines[pointIter + 1][2].x, lines[pointIter + 1][3].x, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
-        count_r( lines[pointIter + 2][0].x, lines[pointIter + 2][1].x, lines[pointIter + 2][2].x, lines[pointIter + 2][3].x, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_curve( lines[pointIter][0].x, lines[pointIter][1].x, lines[pointIter][2].x, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2] ),
+        count_curve( lines[pointIter + 1][0].x, lines[pointIter + 1][1].x, lines[pointIter + 1][2].x, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2] ),
+        count_curve( lines[pointIter + 2][0].x, lines[pointIter + 2][1].x, lines[pointIter + 2][2].x, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2] ),
         u,
         wr_list[0],
         wr_list[1],
@@ -214,9 +170,9 @@ var paramFuncDynamic3to4 = function(u, v, target) {
 
     // var x = co
     var y = count_curve(
-        count_r( lines[pointIter][0].y, lines[pointIter][1].y, lines[pointIter][2].y, lines[pointIter][3].y, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
-        count_r( lines[pointIter + 1][0].y, lines[pointIter + 1][1].y, lines[pointIter + 1][2].y, lines[pointIter + 1][3].y, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
-        count_r( lines[pointIter + 2][0].y, lines[pointIter + 2][1].y, lines[pointIter + 2][2].y, lines[pointIter + 2][3].y, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_curve( lines[pointIter][0].y, lines[pointIter][1].y, lines[pointIter][2].y, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2] ),
+        count_curve( lines[pointIter + 1][0].y, lines[pointIter + 1][1].y, lines[pointIter + 1][2].y, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2] ),
+        count_curve( lines[pointIter + 2][0].y, lines[pointIter + 2][1].y, lines[pointIter + 2][2].y, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2] ),
         u,
         wr_list[0],
         wr_list[1],
@@ -224,9 +180,9 @@ var paramFuncDynamic3to4 = function(u, v, target) {
     );
 
     var z = count_curve(
-        count_r( lines[pointIter][0].z, lines[pointIter][1].z, lines[pointIter][2].z, lines[pointIter][3].z, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
-        count_r( lines[pointIter + 1][0].z, lines[pointIter + 1][1].z, lines[pointIter + 1][2].z, lines[pointIter + 1][3].z, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2], w_list[pointIter + 1][3] ),
-        count_r( lines[pointIter + 2][0].z, lines[pointIter + 2][1].z, lines[pointIter + 2][2].z, lines[pointIter + 2][3].z, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2], w_list[pointIter + 2][3] ),
+        count_curve( lines[pointIter][0].z, lines[pointIter][1].z, lines[pointIter][2].z, v, w_list[pointIter][0], w_list[pointIter][1], w_list[pointIter][2], w_list[pointIter][3] ),
+        count_curve( lines[pointIter + 1][0].z, lines[pointIter + 1][1].z, lines[pointIter + 1][2].z, v, w_list[pointIter + 1][0], w_list[pointIter + 1][1], w_list[pointIter + 1][2]),
+        count_curve( lines[pointIter + 2][0].z, lines[pointIter + 2][1].z, lines[pointIter + 2][2].z, v, w_list[pointIter + 2][0], w_list[pointIter + 2][1], w_list[pointIter + 2][2]),
         u,
         wr_list[0],
         wr_list[1],
@@ -244,8 +200,8 @@ var addMesh = function() {
 
     while (pointIter < lines.length - 1) {
 
-        // let tempGeometry = new ParametricGeometry(paramFuncDynamic3to4, 5, 5);
-        let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
+        let tempGeometry = new ParametricGeometry(paramFuncDynamic3to3, 5, 5);
+        // let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
         let tempMaterial = new THREE.MeshBasicMaterial({
             color: 0xff29,
             side: THREE.DoubleSide,
@@ -257,7 +213,7 @@ var addMesh = function() {
         scene.add(tempMesh);
 
         meshArray.push(tempMesh);
-        pointIter += 3;
+        pointIter += 2;
     }
 }
 
@@ -496,7 +452,7 @@ evclid.add(options, 'rotatez', -180, 180, 1).onChange(function(e){
 // evclid.open();
 let linesOptions = [];
 $.each(lines, function (index, value) {
-    linesOptions.push(add_points(index, value, 4));
+    linesOptions.push(add_points(index, value, 3));
 })
 
 function recount(){
