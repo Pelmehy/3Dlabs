@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 import { ParametricGeometry } from 'three/examples/jsm/geometries/ParametricGeometry.js';
 import * as dat from 'dat.gui';
+import {PointLightHelper} from "three";
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -14,6 +15,19 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
+
+var default_options = {
+    color: 0xff29,
+    wireframe: true,
+    frames: 10,
+    normals: false,
+    movex: 0,
+    movey: 0,
+    movez: 0,
+    rotatex: 0,
+    rotatey: 0,
+    rotatez: 0
+};
 
 // f = 0.5
 var w_list = [
@@ -194,6 +208,7 @@ var paramFuncDynamic3to3 = function(u, v, target) {
     uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
 };
 
+var diffuseReflection = 1000;
 var addMesh = function(frames = 5) {
     pointIter = 0;
     meshArray = [];
@@ -202,10 +217,13 @@ var addMesh = function(frames = 5) {
 
         let tempGeometry = new ParametricGeometry(paramFuncDynamic3to3, frames, frames);
         // let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
-        let tempMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff29,
+        let tempMaterial = new THREE.MeshPhysicalMaterial({
+            color: default_options.color,
             side: THREE.DoubleSide,
-            wireframe: true,
+            shininess: 10,
+            reflectivity: diffuseReflection,
+            transmission: 0.88,
+            opacity: 1,
         });
         let tempMesh = new THREE.Mesh(tempGeometry, tempMaterial);
         tempMesh.position.set( 0, 0, 0 );
@@ -273,6 +291,30 @@ $.each(lines, function (index, value) {
     line_array.push(create_line(tempLineArray));
 });
 
+//--------ADD SPOT LIGHT PROJECTOR--------
+let spotLight = new THREE.SpotLight( 0xffffff, 5 );
+spotLight.position.set( 15, 25, 15 );
+spotLight.angle = Math.PI / 9;
+spotLight.penumbra = 1;
+spotLight.decay = 2;
+spotLight.distance = 80;
+// spotLight.map = textures[ 'disturb.jpg' ];
+
+spotLight.castShadow = true;
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+spotLight.shadow.camera.near = 10;
+spotLight.shadow.camera.far = 200;
+spotLight.shadow.focus = 1;
+spotLight.intensity = 10;
+scene.add( spotLight );
+
+let lightHelper = new THREE.SpotLightHelper( spotLight );
+scene.add( lightHelper );
+
+const lightMaterial2 = new PointLightHelper(spotLight,1);
+scene.add(lightMaterial2);
+
 function setup_lines(){    // Create a Three.js geometry for the point
     $.each(lines, function (index, value) {
         scene.remove(line_array[index]);
@@ -321,18 +363,6 @@ var options = {
 
 var originOptions = Object.assign({}, options);
 
-var default_options = {
-    color: 0xff29,
-    wireframe: true,
-    frames: 10,
-    normals: false,
-    movex: 0,
-    movey: 0,
-    movez: 0,
-    rotatex: 0,
-    rotatey: 0,
-    rotatez: 0
-};
 
 gui.addColor(options, 'color').onChange(function(e){
     $.each(meshArray, function (index, value){
@@ -484,7 +514,13 @@ function recount(){
 
 //gui.add(default_button, 'default');
 
-function animate(time){
+function animate(){
+    const time = performance.now() / 3000;
+    spotLight.position.x = Math.cos( time ) * 25;
+    spotLight.position.z = Math.sin( time ) * 25;
+
+    lightHelper.update();
+
     renderer.render(scene, camera);
 }
 
