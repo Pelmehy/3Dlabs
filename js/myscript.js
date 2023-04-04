@@ -194,13 +194,13 @@ var paramFuncDynamic3to3 = function(u, v, target) {
     uvMap.set(new THREE.Vector3(x, y, z), new THREE.Vector2(u, v));
 };
 
-var addMesh = function() {
+var addMesh = function(frames = 5) {
     pointIter = 0;
     meshArray = [];
 
     while (pointIter < lines.length - 1) {
 
-        let tempGeometry = new ParametricGeometry(paramFuncDynamic3to3, 5, 5);
+        let tempGeometry = new ParametricGeometry(paramFuncDynamic3to3, frames, frames);
         // let tempGeometry = new ParametricGeometry(paramFuncDynamic4to4, 5, 5);
         let tempMaterial = new THREE.MeshBasicMaterial({
             color: 0xff29,
@@ -335,17 +335,23 @@ var default_options = {
 };
 
 gui.addColor(options, 'color').onChange(function(e){
-    mesh.material.color.set(e);
+    $.each(meshArray, function (index, value){
+        value.material.color.set(e);
+    });
 });
 
 gui.add(options, 'wireframe').onChange(function(e){
-    mesh.material.wireframe = e;
+    $.each(meshArray, function (index, value){
+        value.material.wireframe = e;
+    });
 });
 
 gui.add(options, 'frames',1, 40, 1).onChange(function(e){
-    mesh.geometry = new ParametricGeometry(paramFunc, e, e);
+    $.each(meshArray, function (index, value){
+        scene.remove(value);
+    });
+    addMesh(e);
 });
-var helperNormals;
 let normalsArray = [];
 gui.add(options, 'normals').onChange(function(e){
     if(e){
