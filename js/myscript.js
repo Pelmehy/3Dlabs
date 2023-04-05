@@ -209,6 +209,7 @@ var paramFuncDynamic3to3 = function(u, v, target) {
 };
 
 var diffuseReflection = 1000;
+const texture = new THREE.TextureLoader().load("https://media.freestocktextures.com/cache/a2/d1/a2d11cd965e7bf9800fcaea8e84d3049.jpg");
 var addMesh = function(frames = 5) {
     pointIter = 0;
     meshArray = [];
@@ -225,6 +226,11 @@ var addMesh = function(frames = 5) {
             transmission: 0.88,
             opacity: 1,
         });
+
+        if (pointIter < 2) {
+            tempMaterial.map = texture;
+        }
+
         let tempMesh = new THREE.Mesh(tempGeometry, tempMaterial);
         tempMesh.position.set( 0, 0, 0 );
         tempMesh.scale.multiplyScalar( 1 );
@@ -233,6 +239,8 @@ var addMesh = function(frames = 5) {
         meshArray.push(tempMesh);
         pointIter += 2;
     }
+
+    meshArray[0].map = texture;
 }
 
 var paramFuncDynamic4to4 = function(u, v, target) {
@@ -497,7 +505,6 @@ function recount(){
     });
 
     addMesh();
-
     scene.remove(points);
     vertices = new Float32Array(setPoints());
     pointGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
